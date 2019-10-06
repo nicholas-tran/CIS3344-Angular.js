@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<!--ng-app="ENTER" In html tag-->
+<html ng-app="RestaurantAng">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <!-- Include the application's code from a JavaScript file -->
+    <style>
+        body {
+            background-color: cornflowerblue;
+        }
+
+        footer {
+            display: block;
+            clear: both;
+            background-color: black;
+            color: white;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <span><ul><li><a href="SearchRestaurant.html">Search</a></li><li><a href="AddRestaurant.html">Add Restaurant</a></li><li><a href="CreateReview.html">Add Review</a></li><li><a href="DeleteRestaurant.html">Delete Restaurant</a></li></ul></span>
+    <h1>Search For Restaurants</h1>
+    <div id="leftDiv" float: left;">
+
+        <br />
+        <div ng-controller="RestaurantController">
+            Enter restaurant name: <input id="txtRestaurantName" type="text" ng-model="searchName"> <br />
+            <br />
+            <br />
+
+            Restaurants:
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name </th>
+                        <th>City </th>
+                        <th>State </th>
+                        <th>Cuisine </th>
+                        <th>Rating </th>
+                        <th>Price </th>
+                        <th>Phone </th>
+
+                    </tr>
+                </thead>
+                <tr ng-repeat="restaurant in restaurants | filter:{'restName':searchName}">
+                    <td>{{ restaurant.restName }}</td>
+                    <td>{{ restaurant.city }}</td>
+                    <td>{{ restaurant.state }}</td>
+                    <td>{{ restaurant.cuisine }}</td>
+                    <td>{{ restaurant.foodRating }}</td>
+                    <td>{{ restaurant.priceRating }}</td>
+                    <td>{{ restaurant.phone }}</td>
+                </tr>
+            </table>
+        </div>
+        <hr />
+        <h5>Search By Restaurant Location and Ratings</h5>
+        <div class="container" ng-controller="LocRatingController">
+            Enter City: <input id="txtCity" type="text" ng-model="LocRatingCity" /> <br />
+            Enter State: <input id="txtState" type="text" ng-model="LocRatingState" /> <br />
+            Food Quality:<br>
+            <input id="txtQuality" type="text" max="5" maxlength="1" ng-model="LocRatingQuality" /> <br />
+            <br />
+            Price Rating:<br>
+            <input id="txtPrice" type="text" max="4" maxlength="1" ng-model="LocRatingPrice" /> <br />
+            <br />
+            <input id="btnSearch" type="button" value="Search" ng-click="search(searchLocRating)" />
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name </th>
+                        <th>City </th>
+                        <th>State </th>
+                        <th>Cuisine </th>
+                        <th>Rating </th>
+                        <th>Price </th>
+                        <th>Phone </th>
+
+                    </tr>
+                </thead>
+                <tr ng-repeat="restaurant in restaurants | filter:{'city':LocRatingCity, 'state':LocRatingState, 'foodRating':LocRatingQuality, 'priceRating':LocRatingPrice}">
+                    <td>{{ restaurant.restName }}</td>
+                    <td>{{ restaurant.city }}</td>
+                    <td>{{ restaurant.state }}</td>
+                    <td>{{ restaurant.cuisine }}</td>
+                    <td>{{ restaurant.foodRating }}</td>
+                    <td>{{ restaurant.priceRating }}</td>
+                    <td>{{ restaurant.phone }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <hr />
+    </div>
+    <br />
+    <h5>Search By restaurant Location and Cuisine</h5>
+    <div class="container" ng-controller="LocCuisineController">
+        Enter City: <input id="txtCity" type="text" ng-model="LocCuisineCity" /> <br />
+        Enter State: <input id="txtState" type="text" ng-model="LocCuisineState" /> <br />
+        Type of Cuisine:
+        <select id="selrestaurant" ng-model="LocCuisineCuisine">
+            <option value="Italian" selected="selected">Italian</option>
+            <option value="Mediterranean">Mediterranean</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Chinese">Chinese</option>
+            <option value="American">American</option>
+            <option value="Thai">Thai</option>
+            <option value="Albanian">Albanian</option>
+            <option value="Korean">Korean</option>
+            <option value="Mongolian">Mongolian</option>
+        </select>
+        <input id="btnSearch" type="button" value="Search" ng-click="search(searchLocCuisine)" />
+        <table>
+            <thead>
+                <tr>
+                    <th>Name </th>
+                    <th>City </th>
+                    <th>State </th>
+                    <th>Cuisine </th>
+                    <th>Rating </th>
+                    <th>Price </th>
+                    <th>Phone </th>
+
+                </tr>
+            </thead>
+            <tr ng-repeat="restaurant in restaurants | filter:{'city':LocCuisineCity, 'state':LocCuisineState, 'cuisine':LocCuisineCuisine}">
+                <td>{{ restaurant.restName }}</td>
+                <td>{{ restaurant.city }}</td>
+                <td>{{ restaurant.state }}</td>
+                <td>{{ restaurant.cuisine }}</td>
+                <td>{{ restaurant.foodRating }}</td>
+                <td>{{ restaurant.priceRating }}</td>
+                <td>{{ restaurant.phone }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <footer>
+        By: Nick Tran & Thien Nguyen<br />
+        Lab 7 - Angular Lab
+    </footer>
+
+    <script>
+        // create module for application
+        var app = angular.module('RestaurantAng', []);
+
+        // create controller for name search
+        function RestaurantController($scope, $http) {
+            $scope.reverse = false;
+
+            //var url = "http://localhost:4622/api/Restaurant";
+            var url = "http://cis-iis2.temple.edu/fall2018/cis3344_tug26951/WebAPI/api/Restaurant/";
+            $http.get(url).
+                then(function (response) {
+                    $scope.restaurants = response.data;
+                },
+                    function (response) {
+                        alert("ERROR: " + response.data);
+                    });
+        }
+
+        // controller for location cuisine search
+        function LocCuisineController($scope, $http) {
+            $scope.reverse = false;
+
+            $scope.search = function (searchLocCuisine) {
+                //var url = "http://localhost:4622/api/Restaurant";
+                var url = "http://cis-iis2.temple.edu/fall2018/cis3344_tug26951/WebAPI/api/Restaurant/";
+
+                $http.get(url).
+                    then(function (response) {
+                        $scope.restaurants = response.data;
+                    },
+                        function (response) {
+                            alert("ERROR: " + response.data);
+                        });
+            }
+        }
+
+        // controller for location rating search
+        function LocRatingController($scope, $http) {
+            $scope.reverse = false;
+
+            $scope.search = function (searchLocRating) {
+                //var url = "http://localhost:4622/api/Restaurant";
+                var url = "http://cis-iis2.temple.edu/fall2018/cis3344_tug26951/WebAPI/api/Restaurant/";
+
+                $http.get(url).
+                    then(function (response) {
+                        $scope.restaurants = response.data;
+                    },
+                        function (response) {
+                            alert("ERROR: " + response.data);
+                        });
+            }
+        }
+
+        // create controller for name search
+        function ReviewController($scope, $http) {
+            $scope.reverse = false;
+
+            //var url = "http://localhost:4622/api/Restaurant";
+            var url = "http://cis-iis2.temple.edu/fall2018/cis3344_tug26951/WebAPI/api/Restaurant/";
+            $http.get(url).
+                then(function (response) {
+                    $scope.restaurants = response.data;
+                },
+                    function (response) {
+                        alert("ERROR: " + response.data);
+                    });
+        }
+        app.controller('RestaurantController', RestaurantController);
+        app.controller('LocCuisineController', LocCuisineController);
+        app.controller('LocRatingController', LocRatingController);
+    </script>
+</body>
+</html>

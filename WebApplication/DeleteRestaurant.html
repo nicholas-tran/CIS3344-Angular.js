@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<!--ng-app="ENTER" In html tag-->
+<html ng-app="DeleteRestaurantAng">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <style>
+        body {
+            background-color: cornflowerblue;
+        }
+
+        footer {
+            display: block;
+            clear: both;
+            background-color: black;
+            color: white;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <span><ul><li><a href="SearchRestaurant.html">Search</a></li><li><a href="AddRestaurant.html">Add Restaurant</a></li><li><a href="CreateReview.html">Add Review</a></li><li><a href="DeleteRestaurant.html">Delete Restaurant</a></li></ul></span>
+    <div class="container" ng-controller="RestaurantController">
+        <form>
+            <h1>Delete Restaurant Page</h1>
+
+            Restaurant Name:<br>
+            <input type="text" name="txtName" ng-model="restName"><br />
+
+            <input id="btnDeleteRestaurant" type="submit" value="Delete Restaurant" ng-click="deleteRestaurant(restName)" />
+            <br />
+
+        </form>
+    </div>
+
+    <footer>
+        By: Nick Tran & Thien Nguyen<br />
+        Lab 7 - Angular Lab
+    </footer>
+
+    <script>
+        // Create the module for the entire application.
+        var app = angular.module('DeleteRestaurantAng', []);
+
+        function RestaurantController($scope, $http) {
+
+            //var strUrl = 'http://localhost:4622/api/Restaurant/DeleteRestaurant/';
+            var strUrl = 'http://cis-iis2.temple.edu/fall2018/cis3344_tug26951/WebAPI/api/Restaurant/DeleteRestaurant/';
+            var restaurant = new Object();
+
+            $scope.deleteRestaurant = function (restName) {
+                // use $.param jQuery function to serialize data from JSON
+                restaurant.restName = restName;
+                var request = {
+                    method: "PUT",
+                    url: strUrl,
+                    header: {
+                        'Content-Type': "application/json, charset=utf-8"
+                    },
+                    data: JSON.stringify(restaurant),
+                }
+
+                $http(request).
+                    then(function (response) {
+                        alert("Restaurant has been deleted.");
+                    },
+                        function (response) {
+                            alert("Error:" + response.data)
+                        });
+            };
+        }
+
+        app.controller('RestaurantController', RestaurantController);
+    </script>
+
+</body>
+</html>

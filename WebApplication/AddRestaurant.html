@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<!--ng-app="ENTER" In html tag-->
+<html ng-app="AddRestuarantAng">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <style>
+        body {
+            background-color: cornflowerblue;
+        }
+
+        footer {
+            display: block;
+            clear: both;
+            background-color: black;
+            color: white;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <span><ul><li><a href="SearchRestaurant.html">Search</a></li><li><a href="AddRestaurant.html">Add Restaurant</a></li><li><a href="CreateReview.html">Add Review</a></li><li><a href="DeleteRestaurant.html">Delete Restaurant</a></li></ul></span>
+    <div class="container" ng-controller="RestaurantController">
+        <form>
+            <h1>Create Restaurant Page</h1>
+
+            Restaurant Name:<br>
+            <input type="text" name="txtName" ng-model="restName"><br />
+
+            Phone Number:<br>
+            <input type="text" name="txtPhone" ng-model="phone"><br />
+
+            City:<br>
+            <input type="text" name="txtCity" ng-model="city"><br />
+
+            State:<br>
+            <input type="text" name="txtState" ng-model="state"><br />
+
+            Type of Cuisine:<br>
+            <select id="selRestaurant" ng-model="cuisine">
+                <option value="italian">Italian</option>
+                <option value="mediterranean">Mediterranean</option>
+                <option value="japanese">Japanese</option>
+                <option value="chinese">Chinese</option>
+                <option value="american">American</option>
+                <option value="thai">Thai</option>
+                <option value="albanian">Albanian</option>
+                <option value="korean">Korean</option>
+                <option value="mongolian">Mongolian</option>
+            </select><br />
+
+            Quality:<br>
+            <input type="text" name="txtQuality" ng-model="quality"><br />
+
+            Price:<br>
+            <input type="text" name="txtPrice" ng-model="price"><br />
+
+            <input id="btnAddRestaurant" type="submit" value="Add Restaurant" ng-click="addRestaurant(restName, phone, city, state, cuisine, quality, price)" />
+            <br />
+
+        </form>
+    </div>
+
+    <footer>
+        By: Nick Tran & Thien Nguyen<br />
+        Lab 7 - Angular Lab
+    </footer>
+
+    <script>
+        // Create the module for the entire application.
+        var app = angular.module('AddRestuarantAng', []);
+
+        function RestaurantController($scope, $http) {
+
+            //var strUrl = 'http://localhost:4622/api/Restaurant/AddRestaurant/';
+            var strUrl = 'http://cis-iis2.temple.edu/fall2018/cis3344_tug26951/WebAPI/api/Restaurant/AddRestaurant/';
+            var restaurant = new Object();
+
+            $scope.addRestaurant = function (restName, phone, city, state, cuisine, quality, price) {
+                // use $.param jQuery function to serialize data from JSON
+                restaurant.restName = restName;
+                restaurant.phone = phone;
+                restaurant.image = "";
+                restaurant.cuisine = cuisine;
+                restaurant.city = city;
+                restaurant.state = state;
+                restaurant.foodRating = quality;
+                restaurant.priceRating = price;
+                var request = {
+                    method: "POST",
+                    url: strUrl,
+                    header: {
+                        'Content-Type': "application/json, charset=utf-8"
+                    },
+                    data: JSON.stringify(restaurant),
+                }
+
+                $http(request).
+                    then(function (response) {
+                        alert("Restaurant has been added.");
+                    },
+                        function (response) {
+                            alert("Error:" + response.data)
+                        });
+            };
+        }
+
+        app.controller('RestaurantController', RestaurantController);
+    </script>
+
+</body>
+</html>

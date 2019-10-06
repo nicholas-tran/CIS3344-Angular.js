@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<!--ng-app="ENTER" In html tag-->
+<html ng-app="AddReviewAng">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <style>
+        body {
+            background-color: cornflowerblue;
+        }
+
+        footer {
+            display: block;
+            clear: both;
+            background-color: black;
+            color: white;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <span><ul><li><a href="SearchRestaurant.html">Search</a></li><li><a href="AddRestaurant.html">Add Restaurant</a></li><li><a href="CreateReview.html">Add Review</a></li><li><a href="DeleteRestaurant.html">Delete Restaurant</a></li></ul></span>
+    <div class="container" ng-controller="ReviewController">
+        <form>
+            <h1>Create Review Page</h1>
+
+            Restaurant Name:<br>
+            <input type="text" name="txtName" ng-model="restName"><br />
+
+            Quality:<br>
+            <input type="text" name="txtQuality" ng-model="quality"><br />
+
+            Price:<br>
+            <input type="text" name="txtPrice" ng-model="price"><br />
+
+            Comment:<br>
+            <input type="text" name="txtPrice" ng-model="comment"><br />
+
+            <input id="btnAddRestaurant" type="submit" value="Add Review" ng-click="AddReview(restName, quality, price, comment)" />
+            <br />
+
+        </form>
+    </div>
+
+    <footer>
+        By: Nick Tran & Thien Nguyen<br />
+        Lab 7 - Angular Lab
+    </footer>
+
+    <script>
+        // Create the module for the entire application.
+        var app = angular.module('AddReviewAng', []);
+
+        function ReviewController($scope, $http) {
+
+            //var strUrl = 'http://localhost:4622/api/Restaurant/AddReview/';
+            var strUrl = 'http://cis-iis2.temple.edu/fall2018/cis3344_tug26951/WebAPI/api/Restaurant/AddReview/';
+            var review = new Object();
+
+            $scope.AddReview = function (restName, quality, price, comment) {
+                // use $.param jQuery function to serialize data from JSON
+                review.restName = restName;
+                review.foodRating = quality;
+                review.review = price;
+                review.comment = comment;
+                var request = {
+                    method: "POST",
+                    url: strUrl,
+                    header: {
+                        'Content-Type': "application/jsono, charset=utf-8"
+                    },
+                    data: JSON.stringify(review),
+                }
+
+                $http(request).
+                    then(function (response) {
+                        alert("Review has been added.");
+                    },
+                        function (response) {
+                            alert("Error:" + response.data)
+                        });
+            };
+        }
+
+        app.controller('ReviewController', ReviewController);
+    </script>
+
+</body>
+</html>
